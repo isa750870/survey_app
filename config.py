@@ -12,3 +12,6 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     API_TOKEN = os.environ.get("API_TOKEN", "super-secret-api-token")
+
+    # если 1 — разрешаем много раз проходить опросы с одного IP (для тестов)
+    ALLOW_MULTIPLE_RESPONSES = os.environ.get("ALLOW_MULTIPLE_RESPONSES", "0") == "1"

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import Blueprint, render_template, request, redirect, url_for, abort, current_app
 from extensions import db, limiter
 from models import Survey, Response, Answer, Option, Question
 
@@ -35,10 +35,11 @@ def show_survey(survey_id):
 
     ip = request.remote_addr
 
-    # уже отвечал на этот опрос с этого IP? -> сразу на страницу "спасибо"
-    existing = Response.query.filter_by(survey_id=survey_id, ip_address=ip).first()
-    if existing:
-        return redirect(url_for("public.thank_you", survey_id=survey_id))
+    if not current_app.config.get("ALLOW_MULTIPLE_RESPONSES", False):
+        existing = Response.query.filter_by(survey_id=survey_id, ip_address=ip).first()
+        if existing:
+            return redirect(url_for("public.thank_you", survey_id=survey_id))
+
 
     return render_template("public/survey_fill.html", survey=survey)
 
@@ -52,10 +53,10 @@ def submit_survey(survey_id):
 
     ip = request.remote_addr
 
-    # защита от повторного голосования по IP
-    existing = Response.query.filter_by(survey_id=survey_id, ip_address=ip).first()
-    if existing:
-        return redirect(url_for("public.thank_you", survey_id=survey_id))
+    if not current_app.config.get("ALLOW_MULTIPLE_RESPONSES", False):
+        existing = Response.query.filter_by(survey_id=survey_id, ip_address=ip).first()
+        if existing:
+            return redirect(url_for("public.thank_you", survey_id=survey_id))
 
     response = Response(survey_id=survey_id, ip_address=ip)
     db.session.add(response)
