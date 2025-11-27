@@ -3,14 +3,14 @@
 {% block content %}
 <h1 class="mb-4">Результаты опроса "{{ survey.title }}"</h1>
 
-<p>
+<p class="mb-3">
   <a href="{{ url_for('admin.surveys_list') }}" class="btn btn-sm btn-outline-light">
     &larr; Назад к опросам
   </a>
 </p>
 
 {% for block in questions_stats %}
-  <div class="card mb-4">
+  <div class="card card-dark mb-4">
     <div class="card-body">
       <h5 class="card-title">
         Вопрос {{ loop.index }}: {{ block.question.text }}
@@ -27,7 +27,7 @@
         {% endif %}
       </h5>
 
-      {# Табличная статистика по вариантам для single_choice и multiple_choice #}
+      {# Вариантные вопросы: показываем варианты с количеством и % #}
       {% if block.type == 'single_choice' or block.type == 'multiple_choice' %}
         <table class="table table-sm mt-3">
           <thead>
@@ -50,7 +50,30 @@
           </tbody>
         </table>
 
-      {# Текстовые/числовые ответы — списком #}
+      {# Короткий текст / число / шкала / дата — агрегация значений с % #}
+      {% elif block.value_stats %}
+        <table class="table table-sm mt-3">
+          <thead>
+            <tr>
+              <th>Значение ответа</th>
+              <th>Количество</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for row in block.value_stats %}
+            <tr>
+              <td>{{ row.value }}</td>
+              <td>{{ row.count }}</td>
+              <td>{{ row.percent }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="3">Ответов пока нет.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+      {# Длинный текст — показываем все ответы списком #}
       {% else %}
         {% if block.text_answers %}
           <ul class="list-group list-group-flush mt-3">

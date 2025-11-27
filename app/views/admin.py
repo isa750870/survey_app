@@ -6,7 +6,7 @@ from sqlalchemy import func
 from functools import wraps
 
 from extensions import db
-from models import Survey, Question, Option, Answer, Admin
+from models import Survey, Question, Option, Answer, Response, Admin
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -243,7 +243,7 @@ def option_delete(option_id):
 @admin_bp.route("/surveys/<int:survey_id>/results")
 @admin_required
 def survey_results(survey_id):
-    from models import Question  # если выше не импортирован
+    from models import Question  # если выше уже импортировано, можно убрать
 
     survey = Survey.query.get_or_404(survey_id)
 
@@ -281,11 +281,46 @@ def survey_results(survey_id):
                 "question": question,
                 "type": qtype,
                 "options_stats": options_stats,
+                "value_stats": [],
                 "text_answers": [],
             })
 
-        # Все остальные идут как текстовые (включая number/range/date)
-        else:
+        # Короткий текст / число / шкала / дата — группируем одинаковые ответы с процентами
+        elif qtype in ["text", "number", "range", "date"]:
+            rows = (
+                db.session.query(
+                    Answer.text_answer,
+                    func.count(Answer.id).label("answers_count"),
+                )
+                .filter(
+                    Answer.question_id == question.id,
+                    Answer.text_answer.isnot(None),
+                    Answer.text_answer != "",
+                )
+                .group_by(Answer.text_answer)
+                .all()
+            )
+
+            total = sum(row.answers_count for row in rows) or 1
+            value_stats = [
+                {
+                    "value": row.text_answer,
+                    "count": row.answers_count,
+                    "percent": round(row.answers_count * 100.0 / total, 2),
+                }
+                for row in rows
+            ]
+
+            questions_stats.append({
+                "question": question,
+                "type": qtype,
+                "options_stats": [],
+                "value_stats": value_stats,
+                "text_answers": [],
+            })
+
+        # Длинный текст — показываем как список
+        else:  # long_text или неизвестный
             answers = (
                 Answer.query
                 .filter(
@@ -299,6 +334,7 @@ def survey_results(survey_id):
                 "question": question,
                 "type": qtype,
                 "options_stats": [],
+                "value_stats": [],
                 "text_answers": [a.text_answer for a in answers],
             })
 
@@ -307,4 +343,5 @@ def survey_results(survey_id):
         survey=survey,
         questions_stats=questions_stats
     )
+
 

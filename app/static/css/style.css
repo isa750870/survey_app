@@ -174,3 +174,68 @@ main.container {
   border-color: rgba(55, 65, 81, 0.8);
   color: var(--text-main);
 }
+
+/* тёмные карточки для отдельных страниц (редактирование, статистика) */
+
+.card-dark {
+  background: #020617;
+  background-image: none;
+  border-color: #020617;
+  color: #e5e7eb;
+}
+
+.card-dark .card-title,
+.card-dark h1,
+.card-dark h5 {
+  color: #e5e7eb;
+}
+
+.card-dark .text-muted {
+  color: #9ca3af !important;
+}
+
+.card-dark .table {
+  color: #e5e7eb;
+}
+
+.card-dark .table thead {
+  background: #020617;
+}
+
+.card-dark .list-group-item {
+  background-color: #020617;
+  border-color: #0f172a;
+  color: #e5e7eb;
+}
+
+/* Полностью тёмная таблица внутри тёмной карточки */
+
+.card-dark .table {
+  background: #0f172a !important;
+  color: #e5e7eb !important;
+}
+
+.card-dark .table th,
+.card-dark .table td {
+  background: #0f172a !important;
+  color: #e5e7eb !important;
+  border-color: #1e293b !important;
+}
+
+.card-dark .table thead th {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+  border-bottom: 2px solid #1e293b !important;
+}
+
+.card-dark .table tbody tr:nth-child(odd) {
+  background: #0e1526 !important;
+}
+
+.card-dark .table tbody tr:nth-child(even) {
+  background: #0f172a !important;
+}
+
+.card-dark .table tbody tr:hover {
+  background: #1e293b !important;
+}
