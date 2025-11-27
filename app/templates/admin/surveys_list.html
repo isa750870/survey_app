@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Опросы{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="mb-1">Опросы</h1>
+    <p class="text-muted mb-0">Создание, редактирование и анализ результатов.</p>
+  </div>
+  <a href="{{ url_for('admin.survey_create') }}" class="btn btn-primary">
+    + Новый опрос
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table mb-0 align-middle">
+      <thead>
+        <tr>
+          <th style="width: 60px;">ID</th>
+          <th>Название</th>
+          <th style="width: 120px;">Статус</th>
+          <th style="width: 260px;">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for survey in surveys %}
+        <tr>
+          <td>{{ survey.id }}</td>
+          <td>{{ survey.title }}</td>
+          <td>
+            {% if survey.is_active %}
+              <span class="badge bg-success">Активен</span>
+            {% else %}
+              <span class="badge bg-secondary">Выключен</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="btn-group btn-group-sm" role="group">
+              <a href="{{ url_for('admin.survey_edit', survey_id=survey.id) }}"
+                 class="btn btn-outline-light">Редактировать</a>
+              <a href="{{ url_for('admin.questions_list', survey_id=survey.id) }}"
+                 class="btn btn-outline-light">Вопросы</a>
+              <a href="{{ url_for('admin.survey_results', survey_id=survey.id) }}"
+                 class="btn btn-outline-light">Результаты</a>
+            </div>
+            <form action="{{ url_for('admin.survey_delete', survey_id=survey.id) }}"
+                  method="post" class="d-inline">
+              <button type="submit"
+                      class="btn btn-sm btn-outline-danger ms-1"
+                      onclick="return confirm('Удалить опрос?');">
+                Удалить
+              </button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="4" class="text-center text-muted py-3">
+            Опросов пока нет. Создайте первый опрос.
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

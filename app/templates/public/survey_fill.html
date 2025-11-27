@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Опрос: {{ survey.title }}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-10 mx-auto">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="mb-2">{{ survey.title }}</h1>
+        {% if survey.description %}
+          <p class="text-muted mb-4">{{ survey.description }}</p>
+        {% endif %}
+
+        <form method="post" class="mt-3">
+          {% for question in survey.questions %}
+            <div class="mb-4">
+              <p class="fw-semibold mb-2">
+                Вопрос {{ loop.index }}: {{ question.text }}
+                {% if question.type == 'text' or question.type == 'long_text' %}
+                  <span class="badge bg-secondary ms-2">текстовый ответ</span>
+                {% elif question.type == 'multiple_choice' %}
+                  <span class="badge bg-secondary ms-2">несколько вариантов</span>
+                {% elif question.type == 'number' %}
+                  <span class="badge bg-secondary ms-2">числовой ответ</span>
+                {% elif question.type == 'range' %}
+                  <span class="badge bg-secondary ms-2">шкала 1–10</span>
+                {% elif question.type == 'date' %}
+                  <span class="badge bg-secondary ms-2">дата</span>
+                {% endif %}
+              </p>
+
+              {# один вариант #}
+              {% if question.type == 'single_choice' %}
+                {% if question.options %}
+                  {% for option in question.options %}
+                    <div class="form-check mb-2">
+                      <input class="form-check-input"
+                             type="radio"
+                             name="question_{{ question.id }}"
+                             id="q{{ question.id }}o{{ option.id }}"
+                             value="{{ option.id }}">
+                      <label class="form-check-label" for="q{{ question.id }}o{{ option.id }}">
+                        {{ option.text }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <p class="text-muted small">Для этого вопроса ещё нет вариантов ответа.</p>
+                {% endif %}
+
+              {# несколько вариантов #}
+              {% elif question.type == 'multiple_choice' %}
+                {% if question.options %}
+                  {% for option in question.options %}
+                    <div class="form-check mb-2">
+                      <input class="form-check-input"
+                             type="checkbox"
+                             name="question_{{ question.id }}_multi"
+                             id="q{{ question.id }}o{{ option.id }}"
+                             value="{{ option.id }}">
+                      <label class="form-check-label" for="q{{ question.id }}o{{ option.id }}">
+                        {{ option.text }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                  <small class="text-muted">Можно выбрать один или несколько вариантов.</small>
+                {% else %}
+                  <p class="text-muted small">Для этого вопроса ещё нет вариантов ответа.</p>
+                {% endif %}
+
+              {# короткий текст #}
+              {% elif question.type == 'text' %}
+                <input
+                  type="text"
+                  class="form-control"
+                  name="question_{{ question.id }}"
+                  placeholder="Ваш ответ">
+
+              {# длинный текст #}
+              {% elif question.type == 'long_text' %}
+                <textarea
+                  class="form-control"
+                  name="question_{{ question.id }}"
+                  rows="4"
+                  placeholder="Опишите подробнее..."></textarea>
+
+              {# числовой ответ #}
+              {% elif question.type == 'number' %}
+                <input
+                  type="number"
+                  class="form-control"
+                  name="question_{{ question.id }}"
+                  placeholder="Введите число">
+
+              {# шкала 1–10 #}
+              {% elif question.type == 'range' %}
+                <div class="d-flex align-items-center">
+                  <span class="text-muted me-2 small">1</span>
+                  <input
+                    type="range"
+                    class="form-range flex-grow-1"
+                    name="question_{{ question.id }}"
+                    min="1" max="10" value="5">
+                  <span class="text-muted ms-2 small">10</span>
+                </div>
+                <small class="text-muted">1 — совсем не согласен, 10 — полностью согласен.</small>
+
+              {# дата #}
+              {% elif question.type == 'date' %}
+                <input
+                  type="date"
+                  class="form-control"
+                  name="question_{{ question.id }}">
+
+              {% endif %}
+            </div>
+          {% else %}
+            <p class="text-muted">У этого опроса пока нет вопросов.</p>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{{ url_for('public.index') }}" class="btn btn-outline-light">
+              Отмена
+            </a>
+            <button type="submit" class="btn btn-primary">
+              Отправить ответы
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

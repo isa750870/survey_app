@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ "Редактирование" if survey else "Создание" }} опроса{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h1 class="mb-1">
+          {{ "Редактирование опроса" if survey else "Новый опрос" }}
+        </h1>
+        {% if survey %}
+          <p class="text-muted mb-0">ID: {{ survey.id }}</p>
+        {% else %}
+          <p class="text-muted mb-0">Создание нового опроса</p>
+        {% endif %}
+      </div>
+      <a href="{{ url_for('admin.surveys_list') }}" class="btn btn-sm btn-outline-light">
+        &larr; К списку опросов
+      </a>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <div class="card">
+      <div class="card-body">
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Название опроса</label>
+            <input type="text"
+                   name="title"
+                   class="form-control"
+                   placeholder="Например: Оценка баланса игры"
+                   value="{{ survey.title if survey else '' }}"
+                   required>
+            <div class="form-text text-muted">
+              Краткое и понятное название, которое увидит игрок.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Описание</label>
+            <textarea
+              name="description"
+              class="form-control"
+              rows="4"
+              placeholder="Опишите, зачем проводится опрос и что важно узнать.">{{ survey.description if survey else '' }}</textarea>
+            <div class="form-text text-muted">
+              Необязательное поле. Хорошее описание повышает отклик игроков.
+            </div>
+          </div>
+
+          <div class="mb-3 form-check form-switch">
+            <input class="form-check-input"
+                   type="checkbox"
+                   id="is_active"
+                   name="is_active"
+                   {% if survey and survey.is_active %}checked{% elif not survey %}checked{% endif %}>
+            <label class="form-check-label" for="is_active">Опрос активен</label>
+            <div class="form-text text-muted">
+              Неактивный опрос не будет отображаться в списке на стороне игрока.
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{{ url_for('admin.surveys_list') }}" class="btn btn-outline-light">
+              Отмена
+            </a>
+            <button type="submit" class="btn btn-primary">
+              Сохранить опрос
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if survey %}
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="mb-2">Быстрые действия</h5>
+          <p class="text-muted small mb-3">
+            После сохранения настроек можно перейти к настройке вопросов и просмотру результатов.
+          </p>
+          <a href="{{ url_for('admin.questions_list', survey_id=survey.id) }}" class="btn btn-sm btn-outline-light me-2">
+            Вопросы опроса
+          </a>
+          <a href="{{ url_for('admin.survey_results', survey_id=survey.id) }}" class="btn btn-sm btn-outline-light">
+            Результаты опроса
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

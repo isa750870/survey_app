@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Вопросы опроса {{ survey.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="mb-1">Вопросы опроса</h1>
+    <p class="text-muted mb-0">"{{ survey.title }}"</p>
+  </div>
+  <a href="{{ url_for('admin.question_create', survey_id=survey.id) }}" class="btn btn-primary">
+    + Новый вопрос
+  </a>
+</div>
+
+<p>
+  <a href="{{ url_for('admin.surveys_list') }}" class="btn btn-sm btn-outline-light">
+    &larr; Назад к опросам
+  </a>
+</p>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table mb-0 align-middle">
+      <thead>
+        <tr>
+          <th style="width: 60px;">ID</th>
+          <th>Текст</th>
+          <th style="width: 180px;">Тип</th>
+          <th>Варианты</th>
+          <th style="width: 200px;">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for question in questions %}
+        <tr>
+          <td>{{ question.id }}</td>
+          <td>{{ question.text }}</td>
+          <td>
+            {% if question.type == 'single_choice' %}
+              <span class="badge bg-primary">Один вариант</span>
+            {% elif question.type == 'multiple_choice' %}
+              <span class="badge bg-primary">Несколько вариантов</span>
+            {% elif question.type in ['text', 'long_text'] %}
+              <span class="badge bg-secondary">Текстовый ответ</span>
+            {% elif question.type in ['number', 'range'] %}
+              <span class="badge bg-secondary">Числовая / шкала</span>
+            {% elif question.type == 'date' %}
+              <span class="badge bg-secondary">Дата</span>
+            {% else %}
+              <span class="badge bg-secondary">Неизвестный тип</span>
+            {% endif %}
+          </td>
+          <td style="max-width: 260px;">
+            {% if question.type in ['single_choice', 'multiple_choice'] %}
+              <ul class="list-unstyled mb-1 small">
+                {% for option in question.options %}
+                  <li class="d-flex justify-content-between align-items-center">
+                    <span>{{ option.text }}</span>
+                    <span>
+                      <a href="{{ url_for('admin.option_edit', option_id=option.id) }}"
+                         class="text-decoration-none text-muted small me-1">ред.</a>
+                      <form action="{{ url_for('admin.option_delete', option_id=option.id) }}"
+                            method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1">×</button>
+                      </form>
+                    </span>
+                  </li>
+                {% else %}
+                  <li class="text-muted">Вариантов ещё нет.</li>
+                {% endfor %}
+              </ul>
+              <a href="{{ url_for('admin.option_create', question_id=question.id) }}"
+                 class="btn btn-sm btn-outline-light">
+                + Вариант
+              </a>
+            {% else %}
+              <span class="text-muted small">
+                Для этого типа вопроса варианты не требуются.
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="btn-group btn-group-sm" role="group">
+              <a href="{{ url_for('admin.question_edit', question_id=question.id) }}"
+                 class="btn btn-outline-light">Редактировать</a>
+              <form action="{{ url_for('admin.question_delete', question_id=question.id) }}"
+                    method="post" class="d-inline">
+                <button type="submit"
+                        class="btn btn-outline-danger"
+                        onclick="return confirm('Удалить вопрос?');">
+                  Удалить
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-3">
+            Вопросов пока нет. Добавьте первый вопрос.
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

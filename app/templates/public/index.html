@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Опросы{% endblock %}
+{% block content %}
+<div class="row mb-4">
+  <div class="col-lg-10">
+    <h1 class="hero-title mb-3">
+      Внутриигровые <span class="hero-highlight">опросы</span>
+    </h1>
+    <p class="hero-subtitle">
+      Отвечайте на доступные опросы и помогайте улучшать игру.
+      Уже пройденные опросы отображаются отдельно.
+    </p>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <h4 class="mb-2">Доступные опросы</h4>
+  </div>
+
+  {% if available_surveys %}
+    {% for survey in available_surveys %}
+      <div class="col-md-6">
+        <a href="{{ url_for('public.show_survey', survey_id=survey.id) }}" style="text-decoration: none;">
+          <div class="card survey-list-card h-100">
+            <div class="card-body">
+              <h5 class="card-title mb-2">{{ survey.title }}</h5>
+              {% if survey.description %}
+                <p class="card-text text-muted small">{{ survey.description }}</p>
+              {% else %}
+                <p class="card-text text-muted small">Описание не задано.</p>
+              {% endif %}
+              <span class="badge bg-primary">Можно пройти</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <p class="mb-0 text-muted">Нет доступных опросов. Все уже пройдены 🎉</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<div class="row g-3">
+  <div class="col-12">
+    <h4 class="mb-2">Пройденные опросы</h4>
+  </div>
+
+  {% if completed_surveys %}
+    {% for survey in completed_surveys %}
+      <div class="col-md-6">
+        <div class="card h-100" style="opacity: 0.7;">
+          <div class="card-body">
+            <h5 class="card-title mb-2">{{ survey.title }}</h5>
+            {% if survey.description %}
+              <p class="card-text text-muted small">{{ survey.description }}</p>
+            {% else %}
+              <p class="card-text text-muted small">Описание не задано.</p>
+            {% endif %}
+            <span class="badge bg-secondary">Уже пройден</span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <p class="mb-0 text-muted">Вы ещё не прошли ни одного опроса.</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-soft: #e0e7ff;
+  --bg-body: #0f172a;
+  --bg-card: #111827;
+  --bg-card-soft: #020617;
+  --text-main: #e5e7eb;
+  --text-muted: #9ca3af;
+  --border-subtle: #1f2937;
+  --danger: #ef4444;
+}
+
+/* базовый фон */
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #030a19;  /* однотонный фон */
+  color: var(--text-main);
+  padding-top: 85px;
+}
+
+
+/* контейнер */
+
+main.container {
+  max-width: 1000px;
+}
+
+/* navbar */
+
+.navbar {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* карточки */
+
+.card {
+  border-radius: 18px;
+  border: 1px solid var(--border-subtle);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-soft) 100%);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.8);
+}
+
+.card-header {
+  border-bottom-color: rgba(148, 163, 184, 0.15);
+  background: transparent;
+}
+
+.card-body {
+  color: var(--text-main);
+}
+
+/* таблицы */
+
+.table {
+  color: var(--text-main);
+}
+
+.table thead {
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.table > :not(caption) > * > * {
+  border-color: rgba(55, 65, 81, 0.8);
+}
+
+/* формы */
+
+.form-control,
+.form-select {
+  background-color: #020617;
+  border-color: rgba(75, 85, 99, 0.9);
+  color: var(--text-main);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.6);
+  background-color: #020617;
+  color: var(--text-main);
+}
+
+.form-check-input {
+  background-color: #020617;
+  border-color: rgba(75, 85, 99, 0.9);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* кнопки */
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border: none;
+  box-shadow: 0 14px 30px rgba(79, 70, 229, 0.6);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, #4338ca 100%);
+}
+
+.btn-outline-light {
+  border-color: rgba(156, 163, 175, 0.7);
+  color: var(--text-main);
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(148, 163, 184, 0.15);
+}
+
+/* badge */
+
+.badge.bg-secondary {
+  background: rgba(148, 163, 184, 0.25) !important;
+}
+
+/* текст */
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.error,
+.alert-danger {
+  color: #fecaca;
+}
+
+/* список опросов */
+
+.survey-list-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.survey-list-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(79, 70, 229, 0.65);
+  border-color: rgba(129, 140, 248, 0.9);
+}
+
+/* hero-блок на главной */
+
+.hero-title {
+  font-weight: 800;
+  font-size: 2.2rem;
+}
+
+.hero-highlight {
+  background: linear-gradient(90deg, #a855f7, #6366f1, #22d3ee);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.hero-subtitle {
+  color: var(--text-muted);
+}
+
+/* мелочи */
+
+.list-group-item {
+  background-color: transparent;
+  border-color: rgba(55, 65, 81, 0.8);
+  color: var(--text-main);
+}

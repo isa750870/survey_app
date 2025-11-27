@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: survey_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: survey_user
+      POSTGRES_PASSWORD: survey_pass
+      POSTGRES_DB: survey_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U survey_user -d survey_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build: .
+    container_name: survey_web
+    depends_on:
+      db:
+        condition: service_healthy    # <<< вот это важно
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://survey_user:survey_pass@db:5432/survey_db
+      FLASK_APP: wsgi.py
+      FLASK_ENV: production
+      SECRET_KEY: "some-strong-secret"
+      API_TOKEN: "super-secret-api-token"
+    command: >
+      sh -c "flask db upgrade &&
+             gunicorn -b 0.0.0.0:8000 wsgi:app"
+
+volumes:
+  pgdata:

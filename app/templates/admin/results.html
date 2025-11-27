@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Результаты опроса {{ survey.title }}{% endblock %}
+{% block content %}
+<h1 class="mb-4">Результаты опроса "{{ survey.title }}"</h1>
+
+<p>
+  <a href="{{ url_for('admin.surveys_list') }}" class="btn btn-sm btn-outline-light">
+    &larr; Назад к опросам
+  </a>
+</p>
+
+{% for block in questions_stats %}
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">
+        Вопрос {{ loop.index }}: {{ block.question.text }}
+        {% if block.type == 'single_choice' %}
+          <span class="badge bg-primary ms-2">один вариант</span>
+        {% elif block.type == 'multiple_choice' %}
+          <span class="badge bg-primary ms-2">несколько вариантов</span>
+        {% elif block.type in ['text', 'long_text'] %}
+          <span class="badge bg-secondary ms-2">текстовый ответ</span>
+        {% elif block.type in ['number', 'range'] %}
+          <span class="badge bg-secondary ms-2">числовой / шкала</span>
+        {% elif block.type == 'date' %}
+          <span class="badge bg-secondary ms-2">дата</span>
+        {% endif %}
+      </h5>
+
+      {# Табличная статистика по вариантам для single_choice и multiple_choice #}
+      {% if block.type == 'single_choice' or block.type == 'multiple_choice' %}
+        <table class="table table-sm mt-3">
+          <thead>
+            <tr>
+              <th>Вариант</th>
+              <th>Количество</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for row in block.options_stats %}
+            <tr>
+              <td>{{ row.option_text }}</td>
+              <td>{{ row.count }}</td>
+              <td>{{ row.percent }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="3">Ответов пока нет.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+      {# Текстовые/числовые ответы — списком #}
+      {% else %}
+        {% if block.text_answers %}
+          <ul class="list-group list-group-flush mt-3">
+            {% for ans in block.text_answers %}
+              <li class="list-group-item">{{ ans }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="mt-3 text-muted">Ответов пока нет.</p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <p>Вопросов в этом опросе нет.</p>
+{% endfor %}
+{% endblock %}
