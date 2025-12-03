@@ -11,6 +11,14 @@ services:
       POSTGRES_DB: survey_db
     volumes:
       - pgdata:/var/lib/postgresql/data
+    command: >
+      bash -c "
+      docker-entrypoint.sh postgres &
+      sleep 5 &&
+      psql -U survey_user -d survey_db -c 'CREATE DATABASE survey_test_db;' ||
+      echo 'database already exists' &&
+      wait
+      "
     ports:
       - "5433:5432"
     healthcheck:
@@ -37,6 +45,19 @@ services:
     command: >
       sh -c "flask db upgrade &&
              gunicorn -b 0.0.0.0:8000 wsgi:app"
+  tests:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+psycopg2://survey_user:survey_pass@db:5432/survey_test_db
+      FLASK_APP: wsgi.py
+      FLASK_ENV: testing
+      SECRET_KEY: "test-secret"
+      API_TOKEN: "test-api-token"
+      ALLOW_MULTIPLE_RESPONSES: "1"   # чтобы можно было многократно проходить опросы
+    command: >
+      sh -c "pytest -v"
 
 volumes:
   pgdata:

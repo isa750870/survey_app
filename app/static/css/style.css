@@ -62,6 +62,7 @@ main.container {
 
 .table {
   color: var(--text-main);
+  background: rgba(15, 23, 42, 0.9);
 }
 
 .table thead {
